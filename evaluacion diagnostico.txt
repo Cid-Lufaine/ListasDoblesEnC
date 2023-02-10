@@ -1,0 +1,311 @@
+#ifndef ISI_156772_LISTAS_DOBLES_H_INCLUDED
+#define ISI_156772_LISTAS_DOBLES_H_INCLUDED
+typedef struct nodo
+{
+    int dato;
+    struct nodo *sig;
+    struct nodo *ant;
+}TNodoD;
+
+typedef struct
+{
+    TNodoD *cab1;
+    TNodoD *cab2;
+}TCabD;
+
+
+void Crear_Nodo_D_V1(TNodo **nuevo, int info);
+TNodo *Crear_Nodo_D_V2(int info);
+
+int Insertar_Inicio_D(TCabD *CabD, int contenido);
+int Insertar_Final_D(TCabD *CabD, int contenido);
+int Insertar_Ordenado_up_D(TCabD *CabD, int contenido);
+
+
+int Eliminar_Inicio_D(TCabD *CabD);
+int Elimina_Final_D(TCabD *CabD );
+int Elimina_Seleeccion_D(TCabD *CabD, int contenido );
+
+void Muestra_D(TCabD *CabD);
+void Liberar_D(TCabD *CabD);
+
+#endif // ISI_156772_LISTAS_DOBLES_H_INCLUDED
+
+
+
+void Crear_Nodo_D_V1(TNodo **nuevo, int info)
+{
+    *nuevo=(TNodo*)malloc(sizeof(TNodo));
+    if (*nuevo)
+    {
+        (*nuevo)->dato=info;
+        (*nuevo)->sig = NULL;
+        (*nuevo)->ant = NULL;
+        //forma alterna
+        /*
+        (*(*nuevo)).dato=info;
+        (*(*nuevo)).sig=NULL;
+        (*(*nuevo)).ant=NULL;
+         */
+    }
+    return;
+}
+
+TNodo *Crear_Nodo_D_V2(int info)
+{
+    TNodo *nuevo=NULL;
+    nuevo=(TNodo*)malloc(sizeof(TNodo));
+    if (nuevo)
+    {
+        nuevo->dato=info;
+        nuevo->sig=NULL;
+        nuevo->ant=NULL;
+    }
+    return(nuevo);
+}
+
+int Insertar_Inicio_D(TCabD *CabD, int contenido)
+{
+    int bandera=0;
+    TNodoD *nuevo;
+
+    nuevo=Crear_Nodo_LS_V2(contenido);
+    if(nuevo) //cuando el nodo se crea
+    {
+        if(CabD->cab1==NULL)//si es el primer nodo en ser insertado
+        {
+            CabD->cab1=nuevo;
+            CabD->cab2=nuevo;
+        }
+        else
+        {
+            nuevo->sig=CabD->cab1;
+            CabD->cab1->ant=nuevo;
+            CabD->cab1=nuevo;
+        }
+        bandera++;
+    }
+    return(bandera);
+}
+
+int Insertar_Final_D(TCabD *CabD, int contenido)
+{
+    int bandera=0;
+    TNodoD *nuevo;
+
+    nuevo=Crear_Nodo_LS_V2(contenido);
+    if(nuevo) //cuando el nodo se crea
+    {
+         if(CabD->cab2==NULL)//si es el primer nodo en ser insertado
+        {
+            CabD->cab1=nuevo;
+            CabD->cab2=nuevo;
+        }
+        else
+        {
+            nuevo->ant=CabD->cab2;
+            CabD->cab2->sig=nuevo;
+            CabD->cab2=nuevo;
+        }
+        bandera++;
+    }
+    return(bandera);
+}
+
+int Insertar_Ordenado_up_D(TCabD *CabD, int contenido)
+{
+    int bandera=0;
+    TNodoD *nuevo=NULL, *aux1;
+
+    nuevo=Crear_Nodo_LS_V2(contenido);
+    if(nuevo) //cuando el nodo se crea
+    {
+        if(CabD->cab1==NULL) //caso uno lista vacia
+        {
+            CabD->cab1=nuevo;
+            CabD->cab2=nuevo;
+        }
+        else
+        {
+            for(aux1= CabD->cab1; (aux1!=NULL) && (aux1->dato > contenido); aux1=aux1->sig);
+        }
+        if(aux1==CabD->cab1)//caso dos inserta al inicio
+        {
+
+            nuevo->sig=CabD->cab1;
+            CabD->cab1->ant=nuevo;
+            CabD->cab1     =nuevo;
+        }
+        else
+        {
+            if(aux1!=NULL)//caso 3 inserta enmedio
+            {
+                nuevo->sig=aux1;
+                nuevo->ant=aux1->ant;
+                aux1->ant->sig=nuevo;
+                aux1->ant=nuevo;
+            }
+            else//caso 4 inserta al final
+            {
+                CabD->cab2->sig=nuevo;
+                nuevo->ant=CabD->cab2;
+                CabD->cab2=nuevo;
+            }
+        }
+        bandera++;
+    }
+    return(bandera);
+}
+
+int Eliminar_Inicio_D(TCabD *CabD)
+{
+    int bandera=0;
+    TNodoD *aux;
+
+    aux= CabD->cab1;
+    if(CabD->cab1!=NULL)//lista vacia
+    {
+        CabD->cab1=aux->sig;
+        free(aux);
+        bandera++;
+        if(CabD->cab1!=NULL)
+        {
+            CabD->cab1->ant=NULL;
+        }
+        else
+        {
+            CabD->cab2=NULL;
+        }
+        bandera++;
+    }
+    return(bandera);
+}
+
+int Elimina_Final_D(TCabD *CabD )
+{
+    int bandera = 0;
+    TNodoD *aux1;
+
+    aux1=CabD->cab2
+
+    if( CabD->cab2 != NULL )
+    {
+        CabD->cab2=aux1->ant;
+        free(aux1);
+        if( CabD->cab2!=NULL ) // Sólo hay 1 nodo
+            {
+                CabD->cab2->sig=NULL;
+            }
+            else
+            {
+                CabD->cab1=NULL;
+            }
+            bandera++;
+    }
+    return ( bandera );
+} // EliminaFinal
+
+
+int Elimina_Seleeccion_D(TCabD *CabD, int contenido )
+{
+    int bandera=0;
+    TNodoD *aux1;
+
+    if(CabD->cab1==NULL) //caso uno la lista esta vacia
+    {
+        return(bandera);
+    }
+    for(aux1 = CabD->cab1; (aux1!=NULL) && (aux1->dato != contenido); aux1=aux1->sig);
+    if(aux1==CabD->cab1)//caso dos eliminar primer nodo
+        {
+            CabD->cab1=aux->sig;
+            free(aux);
+            bandera++;
+            if(CabD->cab1!=NULL)
+            {
+                CabD->cab1->ant=NULL;
+            }
+            else
+            {
+                CabD->cab2=NULL;
+            }
+            bandera++;
+        }
+        else
+        {
+            if(aux1!=NULL)// eliminar nodo intermedio
+            {
+                aux1->ant->sig=aux1->sig;
+                aux1->sig->ant=aux1->ant;
+                free(aux1);
+            }
+            else//eliminar nodo final
+            {
+                CabD->cab2=aux1->ant;
+                free(aux1);
+                if( CabD->cab2!=NULL ) // Sólo hay 1 nodo
+                {
+                    CabD->cab2->sig=NULL;
+                }
+                else
+                {
+                    CabD->cab1=NULL;
+                }
+                bandera++;
+            }
+        }
+    return(bandera);//regresa 1 cuando elimino algo y 0 cuando no elimina nada
+}
+
+
+void Muestra_D(TNodo *cab)
+{
+    TNodoD *aux;
+    if(cab==NULL)
+    {
+        printf("la lista esta vacia\n");
+        return;
+    }
+    printf("la lista no esta vacia \n");
+    for(aux=cab;aux->sig!=NULL;aux=aux->sig)
+    {
+        //printf( "leyendo pre\n");
+        printf("%i ,", aux->dato);
+        //printf( "leyendo post\n");
+    }
+    printf("%i \n", aux->dato);
+
+    return;
+}
+
+void Liberar_D(TCabD *CabD)
+{
+    while(Eliminar_Inicio_D(CabD)!=0);
+    return;
+}
+
+int  Muestra_D(TNodo *cab, int indice)
+{
+    TNodoD *aux;
+    if(cab==NULL)
+    {
+        printf("la lista esta vacia\n");
+        return;
+    }
+    int idice_actual=0;
+
+    for(aux=cab;aux->sig!=NULL && indice_actual != indice ;aux=aux->sig)
+    {
+        indice_actual++;
+    }
+
+    if(indice_actual==indice)
+    {
+        return aux->dato;
+    }
+    return nullptr;
+}
+
+
+
+
